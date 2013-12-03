@@ -16,6 +16,7 @@ Board::Board(QWidget *parent) :
     QWidget(parent)
 {
     setFixedSize(SIDE_LENGTH, SIDE_LENGTH);
+    state = BEFORE_PLAY;
     reset();
 }
 
@@ -38,7 +39,6 @@ void Board::reset(){
 void Board::paintEvent(QPaintEvent *){
 
     cout<<"Running painter\n";
-
     QPainter p(this);
 
     //Draw the board
@@ -71,8 +71,8 @@ void Board::paintEvent(QPaintEvent *){
 }
 
 void Board::clearLegalMoves(){
-    for (int i = 0; i < 10; i++){
-        for (int j = 0; j < 10; j++){
+    for (int i = 0; i < SQUARE_PER_SIDE; i++){
+        for (int j = 0; j < SQUARE_PER_SIDE; j++){
             legalMoves[i][j] = false;
         }
     }
@@ -98,8 +98,8 @@ bool Board::checkForPossibleMove(){
 }
 
 bool Board::checkFirst(int x, int y){
-    cout << " Check first x: " << x << endl;
-    cout << " Check first y: " << y << endl;
+    //cout << " Check first x: " << x << endl;
+    //cout << " Check first y: " << y << endl;
     Piece piece;
     if (player == black){
         piece = BLACK;
@@ -135,8 +135,8 @@ QPoint Board::translateToBoard(QPoint p){
 
     int x = p.x()/50;
     int y = p.y()/50;
-    cout<< "X: " << x << endl;
-    cout << "Y: " << y << endl;
+    //cout<< "X: " << x << endl;
+    //cout << "Y: " << y << endl;
     QPoint point;
     point.setX(x);
     point.setY(y);
@@ -476,14 +476,22 @@ bool Board::checkVerticalDown(QPoint p){
 
 void Board::mousePressEvent(QMouseEvent * event)
 {
+    if (state == AFTER_PLAY){
+        state = BEFORE_PLAY;
+        reset();
+    }
+
+    if (state != PLAYING)
+        return;
+
     if (event->button() == Qt::LeftButton){
         cout << "Calling Mouse click listener\n";
         QPoint point = event->pos();
-        bool temp = isValidMove(point);
-        cout << temp << endl;
+        //bool temp = isValidMove(point);
+        //cout << temp << endl;
         if (isValidMove(point)){
             cout << "Is valid move!" << endl;
-            while(isValidMove(point)){//Flip the pieces in all applicable direction
+            /*while(isValidMove(point)){//Flip the pieces in all applicable direction
                 QPoint p = translateToBoard(point);
                 if (pieces[p.x()][p.y()] != EMPTY){
                     if (movecount==98 || bothPass){
@@ -494,7 +502,9 @@ void Board::mousePressEvent(QMouseEvent * event)
                     }break;
                 }
                 flipPiece(point);
-            }
+            }*/
+            flipPiece(point);
+            movecount++;
             bool checkMoveMade = makeMove(point);//Make the move and Store Boolean Value
 
             if (checkMoveMade) {
@@ -512,11 +522,12 @@ void Board::mousePressEvent(QMouseEvent * event)
                 }
             }
         }
-        else {
-            if (bothPass || movecount == 96){
-                // Add code for Game Ending
-            }
+        if (bothPass || movecount == 96){
+            state = AFTER_PLAY;
+            cout << "finished!" << endl;
+            // Add code for Game Ending
         }
+
     }
     update();
 }

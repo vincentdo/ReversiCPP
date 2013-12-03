@@ -5,12 +5,16 @@
 #include <QtGui>
 #include <vector>
 
+enum State { BEFORE_PLAY, PLAYING, PAUSED, AFTER_PLAY };
+
 class Board : public QWidget
 {
   Q_OBJECT
 
  public:
   Board(QWidget* parent);  
+  State state;
+  void reset(); // reset board
 
  protected:
   void mousePressEvent(QMouseEvent* event);
@@ -18,10 +22,6 @@ class Board : public QWidget
 
 
  private:
-  void reset(); // reset board
-
-  enum State { BEFORE_PLAY, PLAYING, PAUSED, AFTER_PLAY } state;
-
   enum Piece { EMPTY, BLACK, WHITE } piece_t;
 
   Qt::GlobalColor player;
