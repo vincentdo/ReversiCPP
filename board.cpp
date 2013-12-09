@@ -15,7 +15,7 @@ int movecount = 0;
 Board::Board(QWidget *parent) :
     QWidget(parent)
 {
-    setFixedSize(SIDE_LENGTH, SIDE_LENGTH);
+    setFixedSize(SIDE_LENGTH+1, SIDE_LENGTH +1);
     state = BEFORE_PLAY;
     reset();
 }
@@ -33,6 +33,11 @@ void Board::reset(){
     pieces[SQUARE_PER_SIDE/2 - 1][SQUARE_PER_SIDE/2 - 1] = WHITE;
     player = black;
     checkForPossibleMove();
+    lastPass = false;
+    bothPass = false;
+    NewMoveAdded = false;
+    count_black = 0;
+    count_white = 0;
     update();
 }
 
@@ -42,8 +47,7 @@ void Board::paintEvent(QPaintEvent *){
     QPainter p(this);
 
     //Draw the board
-    p.drawRect(0, 0, SIDE_LENGTH-1, SIDE_LENGTH-1);
-
+    p.drawRect(0, 0, SIDE_LENGTH, SIDE_LENGTH);
 
     //Repaint the pieces each time
     for (int i = 0; i < SQUARE_PER_SIDE; i++){
@@ -476,8 +480,7 @@ bool Board::checkVerticalDown(QPoint p){
 
 void Board::mousePressEvent(QMouseEvent * event)
 {
-    if (state == AFTER_PLAY){
-        state = BEFORE_PLAY;
+    if (state == BEFORE_PLAY){
         reset();
     }
 
@@ -504,6 +507,18 @@ void Board::mousePressEvent(QMouseEvent * event)
                 flipPiece(point);
             }*/
             flipPiece(point);
+            //update movelist
+            int mx = point.x()/50;
+            int my = point.y()/50;
+            if (player==black)
+                newmove = "Black Move: x ";
+            else
+                newmove = "White Move: x ";
+            newmove += QString::number(mx);
+            newmove += ", y ";
+            newmove += QString::number(my);
+            NewMoveAdded = true;
+
             movecount++;
             bool checkMoveMade = makeMove(point);//Make the move and Store Boolean Value
 
@@ -522,10 +537,20 @@ void Board::mousePressEvent(QMouseEvent * event)
                 }
             }
         }
-        if (bothPass || movecount == 96){
+        //count the number of pieces
+        count_black = 0;
+        count_white = 0;
+        for (int i = 0; i < SQUARE_PER_SIDE; i++){
+            for (int j = 0; j < SQUARE_PER_SIDE; j++){
+                if (pieces[i][j] == BLACK)
+                    count_black++;
+                if (pieces[i][j] == WHITE)
+                    count_white++;
+            }
+        }
+        if (bothPass || (count_black+count_white == 100)){
             state = AFTER_PLAY;
             cout << "finished!" << endl;
-            // Add code for Game Ending
         }
 
     }

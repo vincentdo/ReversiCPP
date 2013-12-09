@@ -6,6 +6,7 @@
 #include <QObject>
 #include "board.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,12 +21,17 @@ public:
 
 private slots:
     void on_pushButton_2_clicked();
-
+    void update_score();
     void on_pushButton_clicked();
+
+    void on_pushButton_Instruction_clicked();
+
+    void on_pushButton_Exit_clicked();
 
 private:
     Ui::MainWindow *ui;
     Board * canvas;
+    QTimer * timer;
 };
 
 #endif // MAINWINDOW_H

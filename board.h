@@ -14,6 +14,10 @@ class Board : public QWidget
  public:
   Board(QWidget* parent);  
   State state;
+  int count_black, count_white;
+  Qt::GlobalColor player;
+  bool NewMoveAdded;
+  QString newmove;
   void reset(); // reset board
 
  protected:
@@ -24,7 +28,7 @@ class Board : public QWidget
  private:
   enum Piece { EMPTY, BLACK, WHITE } piece_t;
 
-  Qt::GlobalColor player;
+
 
   // size of board
   static const int SQUARE_PER_SIDE = 10;
@@ -42,6 +46,8 @@ class Board : public QWidget
 
   int CHECK_X;
   int CHECK_Y;
+
+
 
   bool isValidMove(QPoint point);
   QPoint translateToBoard(QPoint point);
