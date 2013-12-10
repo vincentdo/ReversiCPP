@@ -32,6 +32,7 @@ void MainWindow::update_score()
     black.append(QString::number(canvas->count_black));
     QString white = "White Score: ";
     white.append(QString::number(canvas->count_white));
+
     switch (canvas->state){
     case BEFORE_PLAY:
         ui->pushButton->setText("Start");
@@ -54,8 +55,6 @@ void MainWindow::update_score()
             canvas->NewMoveAdded = false;
         }
         break;
-
-
 
     case PAUSED:
         ui->pushButton_2->setText("Resume");
@@ -98,9 +97,11 @@ void MainWindow::on_pushButton_clicked()
     case BEFORE_PLAY:
         canvas->state = PLAYING;
         break;
+
     case AFTER_PLAY:
         canvas->state = BEFORE_PLAY;
         break;
+
     default:
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Restart?", "Are you sure to restart the game?",
@@ -119,6 +120,7 @@ void MainWindow::on_pushButton_Instruction_clicked()
     instructions.setModal(true);
     instructions.exec();
 }
+
 void MainWindow::on_pushButton_Exit_clicked()
 {
     QMessageBox::StandardButton reply;

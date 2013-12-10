@@ -42,13 +42,9 @@ void Board::reset(){
 }
 
 void Board::paintEvent(QPaintEvent *){
-
-    cout<<"Running painter\n";
     QPainter p(this);
-
     //Draw the board
     p.drawRect(0, 0, SIDE_LENGTH, SIDE_LENGTH);
-
     //Repaint the pieces each time
     for (int i = 0; i < SQUARE_PER_SIDE; i++){
         for (int j = 0; j < SQUARE_PER_SIDE; j++){
@@ -58,11 +54,9 @@ void Board::paintEvent(QPaintEvent *){
                 p.fillRect(i * SIZE_OF_SQUARE + 1, j * SIZE_OF_SQUARE + 1, SIZE_OF_SQUARE - 1, SIZE_OF_SQUARE - 1, Qt::yellow);
             }
             if (pieces[i][j] == BLACK){
-//                cout<< "Piece Type: " << pieces[i][j] << " @ index: " << i << " " << j << "\n";
                 p.setBrush(Qt::black);
             }
             if (pieces[i][j] == WHITE){
-//                cout<< "Piece Type: " << pieces[i][j] << " @ index: " << i << " " << j << "\n";
                 p.setBrush(Qt::white);
             }
             if (pieces[i][j] != EMPTY){
@@ -102,8 +96,6 @@ bool Board::checkForPossibleMove(){
 }
 
 bool Board::checkFirst(int x, int y){
-    //cout << " Check first x: " << x << endl;
-    //cout << " Check first y: " << y << endl;
     Piece piece;
     if (player == black){
         piece = BLACK;
@@ -139,8 +131,6 @@ QPoint Board::translateToBoard(QPoint p){
 
     int x = p.x()/50;
     int y = p.y()/50;
-    //cout<< "X: " << x << endl;
-    //cout << "Y: " << y << endl;
     QPoint point;
     point.setX(x);
     point.setY(y);
@@ -488,24 +478,8 @@ void Board::mousePressEvent(QMouseEvent * event)
         return;
 
     if (event->button() == Qt::LeftButton){
-        cout << "Calling Mouse click listener\n";
         QPoint point = event->pos();
-        //bool temp = isValidMove(point);
-        //cout << temp << endl;
         if (isValidMove(point)){
-            cout << "Is valid move!" << endl;
-            /*while(isValidMove(point)){//Flip the pieces in all applicable direction
-                QPoint p = translateToBoard(point);
-                if (pieces[p.x()][p.y()] != EMPTY){
-                    if (movecount==98 || bothPass){
-                        //Display When User Attempt to Make Move When Game Ended
-                    }
-                    else {
-                        //Display When User Attempt to Make Move On Non-Empty Space
-                    }break;
-                }
-                flipPiece(point);
-            }*/
             flipPiece(point);
             //update movelist
             int mx = point.x()/50;
@@ -520,12 +494,13 @@ void Board::mousePressEvent(QMouseEvent * event)
             NewMoveAdded = true;
 
             movecount++;
-            bool checkMoveMade = makeMove(point);//Make the move and Store Boolean Value
+            //Make the move and Store Boolean Value
+            bool checkMoveMade = makeMove(point);
 
             if (checkMoveMade) {
-                playerSwitch();//Switch Player player
+                //Switch Player player
+                playerSwitch();
             }
-
             //Execute only when there is no possible move for current player
             while (!checkForPossibleMove()){
                 if (!lastPass){
@@ -550,7 +525,6 @@ void Board::mousePressEvent(QMouseEvent * event)
         }
         if (bothPass || (count_black+count_white == 100)){
             state = AFTER_PLAY;
-            cout << "finished!" << endl;
         }
 
     }
